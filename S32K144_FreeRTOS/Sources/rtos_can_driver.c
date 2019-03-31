@@ -1,71 +1,4 @@
-/*
- * Copyright (c) 2015 - 2016 , Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
- * All rights reserved.
- *
- * THIS SOFTWARE IS PROVIDED BY NXP "AS IS" AND ANY EXPRESSED OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL NXP OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
- */
 
-/*
- * main-blinky.c is included when the "Blinky" build configuration is used.
- * main-full.c is included when the "Full" build configuration is used.
- *
- * main-blinky.c (this file) defines a very simple demo that creates two tasks,
- * one queue, and one timer.  It also demonstrates how Cortex-M4 interrupts can
- * interact with FreeRTOS tasks/timers.
- *
- * This simple demo project runs 'stand alone' (without the rest of the tower
- * system) on the Freedom Board or Validation Board, which is populated with a
- * S32K144 Cortex-M4 microcontroller.
- *
- * The idle hook function:
- * The idle hook function demonstrates how to query the amount of FreeRTOS heap
- * space that is remaining (see vApplicationIdleHook() defined in this file).
- *
- * The main() Function:
- * main() creates one software timer, one queue, and two tasks.  It then starts
- * the scheduler.
- *
- * The Queue Send Task:
- * The queue send task is implemented by the prvQueueSendTask() function in
- * this file.  prvQueueSendTask() sits in a loop that causes it to repeatedly
- * block for 200 milliseconds, before sending the value 100 to the queue that
- * was created within main().  Once the value is sent, the task loops back
- * around to block for another 200 milliseconds.
- *
- * The Queue Receive Task:
- * The queue receive task is implemented by the prvQueueReceiveTask() function
- * in this file.  prvQueueReceiveTask() sits in a loop that causes it to
- * repeatedly attempt to read data from the queue that was created within
- * main().  When data is received, the task checks the value of the data, and
- * if the value equals the expected 100, toggles the green LED.  The 'block
- * time' parameter passed to the queue receive function specifies that the task
- * should be held in the Blocked state indefinitely to wait for data to be
- * available on the queue.  The queue receive task will only leave the Blocked
- * state when the queue send task writes to the queue.  As the queue send task
- * writes to the queue every 200 milliseconds, the queue receive task leaves the
- * Blocked state every 200 milliseconds, and therefore toggles the blue LED
- * every 200 milliseconds.
- *
- * The LED Software Timer and the Button Interrupt:
- * The user button BTN1 is configured to generate an interrupt each time it is
- * pressed.  The interrupt service routine switches the red LED on, and
- * resets the LED software timer.  The LED timer has a 5000 millisecond (5
- * second) period, and uses a callback function that is defined to just turn the
- * LED off again.  Therefore, pressing the user button will turn the LED on, and
- * the LED will remain on until a full five seconds pass without the button
- * being pressed.
- */
 
 /* Kernel includes. */
 #include "FreeRTOS.h"
@@ -83,40 +16,106 @@
 #include "pin_mux.h"
 
 #include "BoardDefines.h"
+#include "rtos_can_driver.h"
 
 
 /* Priorities at which the tasks are created. */
 #define mainQUEUE_RECEIVE_TASK_PRIORITY		( tskIDLE_PRIORITY + 2 )
 #define	mainQUEUE_SEND_TASK_PRIORITY		( tskIDLE_PRIORITY + 1 )
-
 /* The rate at which data is sent to the queue, specified in milliseconds, and
 converted to ticks using the portTICK_PERIOD_MS constant. */
 #define mainQUEUE_SEND_FREQUENCY_MS			( 200 / portTICK_PERIOD_MS )
-
 /* The LED will remain on until the button has not been pushed for a full
 5000ms. */
 #define mainBUTTON_LED_TIMER_PERIOD_MS		( 5000UL / portTICK_PERIOD_MS )
-
 /* The number of items the queue can hold.  This is 1 as the receive task
 will remove items as they are added, meaning the send task should always find
 the queue empty. */
 #define mainQUEUE_LENGTH					( 1 )
-
 /* The LED toggle by the queue receive task (blue). */
 #define mainTASK_CONTROLLED_LED				( 1UL << 0UL )
-
 /* The LED turned on by the button interrupt, and turned off by the LED timer
 (green). */
 #define mainTIMER_CONTROLLED_LED			( 1UL << 1UL )
-
 /* The vector used by the GPIO port C.  Button SW7 is configured to generate
 an interrupt on this port. */
 #define mainGPIO_C_VECTOR					( 61 )
-
 /* A block time of zero simply means "don't block". */
 #define mainDONT_BLOCK						( 0UL )
 
-/*-----------------------------------------------------------*/
+/*********************************************************************************************/
+/*********************************************************************************************/
+/*********************************************************************************************/
+
+/** Defines the initial value for the variables*/
+#define INIT_VAL				(0)
+/** Defines the size of the RAM for the message buffers*/
+#define MAX_MSG_BUFFERS			(128)
+/** Defines the number of ID filters*/
+#define MAX_FILTER_BUFFERS		(16)
+
+/** Defines the length of a buffer*/
+#define MSG_BUF_SIZE			(4)
+
+/** Defines the RX mask to enable the buffer*/
+#define ENABLE_RX_BUFF			(0x04000000)
+
+/** Defines the value to accept all IDs*/
+#define NOT_CHECK_ANY_ID		(0x00000000)
+
+/** Defines the bits to clear the interruption flag of the Rx MB*/
+#define CLEAR_MB_0				(0x00000001)
+/** Defines the mask for the standard ID*/
+#define STD_ID_MASK				(0x000007FF)
+/** Defines the shifts for the standard ID*/
+#define STD_ID_SHIFT				(18)
+
+/** Defines the transmit code*/
+#define TX_BUFF_TRANSMITT		(0x0C400000)
+
+/** Defines the mask for the MB code*/
+#define CAN_CODE_MASK			(0x07000000)
+/** Defines the shift for the MB code*/
+#define CAN_CODE_SHIFT			(24)
+
+/** Defines the mask for the time stamp*/
+#define CAN_TIMESTAMP_MASK		(0x0000FFFF)
+/** Defines the bits to clear the interruption flag of the Tx MB*/
+#define CLEAR_MB_4				(0x00000010)
+
+/** Defines the mask for the LSB*/
+#define BIT_MASK				(1)
+/** Defines the bits to clear al MB interruption flags*/
+#define CLEAR_ALL_FLAGS			(0xFFFFFFFF)
+
+/** Defines the Rx MB offset in RAM array*/
+#define RX_BUFF_OFFSET			(0x04)
+/** Defines the Tx MB offset in RAM array*/
+#define TX_BUFF_OFFSET			(0x00)
+/** Defines the code and DLC position in the MB array*/
+#define CODE_AND_DLC_POS		(0x00)
+/** Defines the ID position in the MB array*/
+#define ID_POS					(0x01)
+/** Defines the message start position in the MB array*/
+#define MSG_POS					(0x02)
+/** Defines the max data size of the MB array*/
+#define DATA_SIZE				(0x02)
+
+/** Defines the divisor to convert from DLC to the msg size*/
+#define DLC_TO_MSG_SIZE_DIV		(0x04)
+/** Defines the shifts for the Rx MB interruption flag*/
+#define RX_MB_FLAG_SHIFT		(0x04)
+
+/** Disable CAN FS*/
+#define CAN_FD_DISABLE			(0x0000001F)
+/** Offset to calculate the msg_size from DLC*/
+#define MESSAGE_SIZE_OFF		(0x03)
+/** Delay for the Tx*/
+#define CAN_DELAY					(10000)
+
+/*********************************************************************************************/
+/*********************************************************************************************/
+/*********************************************************************************************/
 
 /*
  * Setup the NVIC, LED outputs, and button inputs.
@@ -145,6 +144,76 @@ function. */
 static TimerHandle_t xButtonLEDTimer = NULL;
 
 /*-----------------------------------------------------------*/
+
+
+/**************************************************************************************************/
+/** This function initializes the CAN*/
+void CAN_Init(CAN_Type* base, uint32_t speed)
+{
+	/** Counter to clean the RAM*/
+	uint8_t counter;
+
+	/** For CAN0*/
+	if(CAN0 == base)
+	{
+		/** Enables the peripheral clock*/
+		PCC->PCCn[PCC_FlexCAN0_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** For CAN1*/
+	else if(CAN1 == base)
+	{
+		/** Enables the peripheral clock*/
+		PCC->PCCn[PCC_FlexCAN1_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** For CAN2*/
+	else if(CAN2 == base)
+	{
+		PCC->PCCn[PCC_FlexCAN2_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** Disables the module*/
+	base->MCR |= CAN_MCR_MDIS_MASK;
+	/** Sets the clock source to the oscillator clock*/
+	base->CTRL1 &= (~CAN_CTRL1_CLKSRC_MASK);
+	/** Enables the module*/
+	base->MCR &= (~CAN_MCR_MDIS_MASK);
+
+	/** Waits for the module to enter freeze mode, to manage the CTRL and other registers*/
+	while(!((base->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT));
+
+	/** Configures the speed, and other parameters*/
+	base->CTRL1 = speed;
+
+	/** Initializes the MB RAM in 0*/
+	for(counter = INIT_VAL ; MAX_MSG_BUFFERS > counter ; counter ++)
+	{
+		base->RAMn[counter] = INIT_VAL;
+
+		/** Sets the ID masks to not check the ID*/
+		if(MAX_FILTER_BUFFERS > counter)
+		{
+			base->RXIMR[counter] = NOT_CHECK_ANY_ID;
+		}
+	}
+
+	/** Sets the global ID mask to not check any ID*/
+	CAN0->RXMGMASK = NOT_CHECK_ANY_ID;
+
+	/** Enables the MB 4 for reception*/
+	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = ENABLE_RX_BUFF;
+
+	/** CAN FD not used*/
+	base->MCR = CAN_FD_DISABLE;
+
+	/** Waits for the module to exit freeze mode*/
+	while ((base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
+	/** Waits for the module to be ready*/
+	while ((base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
+}
+
+/**************************************************************************************************/
 
 void rtos_start( void )
 {

@@ -54,7 +54,7 @@
   #include "Init_Config.h"
 #endif
 #include "S32K144.h"
-#include "can_driver.h"
+#include "rtos_can_driver.h"
 #include "transceiver.h"
 #include "clocks_and_modes.h"
 
@@ -81,27 +81,7 @@ extern void rtos_start(void);
 */
 int main(void)
 {
-  /* Write your local variable definition here */
-
-  /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
-  #ifdef PEX_RTOS_INIT
-    PEX_RTOS_INIT();                 /* Initialization of the selected RTOS. Macro is defined by the RTOS component. */
-  #endif
-  /*** End of Processor Expert internal initialization.                    ***/
-
-  /* All of the code is in rtos.c file */
-
-  /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
-  /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
-  #ifdef PEX_RTOS_START
-    PEX_RTOS_START();                  /* Startup of the selected RTOS. Macro is defined by the RTOS component. */
-  #endif
-  /*** End of RTOS startup code.  ***/
-
-	uint16_t ID;
-	uint32_t msg[16];
-	uint8_t msg_size;
-	uint8_t DLC;
+	/**Disables Watchdog*/
 	WDOG_disable();
 
 	/*********************** NOTE ***************************/
@@ -125,26 +105,20 @@ int main(void)
 	LPSPI1_init_MC33903();   /* Configure SBC via SPI for CAN transceiver operation */
 	/** To here **********************************************************************************************/
 
+  /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
+  #ifdef PEX_RTOS_INIT
+    PEX_RTOS_INIT();                 /* Initialization of the selected RTOS. Macro is defined by the RTOS component. */
+  #endif
+  /*** End of Processor Expert internal initialization.                    ***/
 
-	while(1)
-	{
+  /* All of the code is in rtos.c file */
 
-//		/** Waits for the CAN to receive*/
-//		if(CAN_get_rx_status(CAN0))
-//		{
-//			/** Gets the message*/
-//			CAN_receive_message(CAN0, &ID, msg, &msg_size, &DLC);
-//
-//			/** Sends the message with another ID*/
-//			CAN_send_message(CAN0, ID + 1, msg, msg_size, DLC);
-//
-//			/** Waits for the CAN to finish the transmission*/
-//			while(!CAN_get_tx_status(CAN0));
-//
-//			/** Clears the flags*/
-//			CAN_clear_tx_and_rx_flags(CAN0);
-//		}
-	}
+  /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
+  /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
+  #ifdef PEX_RTOS_START
+    PEX_RTOS_START();                  /* Startup of the selected RTOS. Macro is defined by the RTOS component. */
+  #endif
+  /*** End of RTOS startup code.  ***/
 
 	return 0;
 }

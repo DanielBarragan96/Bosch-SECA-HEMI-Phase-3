@@ -9,49 +9,49 @@ C_SRCS_QUOTED += \
 "../Sources/can_driver.c" \
 "../Sources/clocks_and_modes.c" \
 "../Sources/main.c" \
-"../Sources/rtos.c" \
+"../Sources/rtos_can_driver.c" \
 "../Sources/transceiver.c" \
 
 C_SRCS += \
 ../Sources/can_driver.c \
 ../Sources/clocks_and_modes.c \
 ../Sources/main.c \
-../Sources/rtos.c \
+../Sources/rtos_can_driver.c \
 ../Sources/transceiver.c \
 
 OBJS_OS_FORMAT += \
 ./Sources/can_driver.o \
 ./Sources/clocks_and_modes.o \
 ./Sources/main.o \
-./Sources/rtos.o \
+./Sources/rtos_can_driver.o \
 ./Sources/transceiver.o \
 
 C_DEPS_QUOTED += \
 "./Sources/can_driver.d" \
 "./Sources/clocks_and_modes.d" \
 "./Sources/main.d" \
-"./Sources/rtos.d" \
+"./Sources/rtos_can_driver.d" \
 "./Sources/transceiver.d" \
 
 OBJS += \
 ./Sources/can_driver.o \
 ./Sources/clocks_and_modes.o \
 ./Sources/main.o \
-./Sources/rtos.o \
+./Sources/rtos_can_driver.o \
 ./Sources/transceiver.o \
 
 OBJS_QUOTED += \
 "./Sources/can_driver.o" \
 "./Sources/clocks_and_modes.o" \
 "./Sources/main.o" \
-"./Sources/rtos.o" \
+"./Sources/rtos_can_driver.o" \
 "./Sources/transceiver.o" \
 
 C_DEPS += \
 ./Sources/can_driver.d \
 ./Sources/clocks_and_modes.d \
 ./Sources/main.d \
-./Sources/rtos.d \
+./Sources/rtos_can_driver.d \
 ./Sources/transceiver.d \
 
 
@@ -80,11 +80,11 @@ Sources/main.o: ../Sources/main.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Sources/rtos.o: ../Sources/rtos.c
+Sources/rtos_can_driver.o: ../Sources/rtos_can_driver.c
 	@echo 'Building file: $<'
 	@echo 'Executing target #4 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
-	arm-none-eabi-gcc "@Sources/rtos.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "Sources/rtos.o" "$<"
+	arm-none-eabi-gcc "@Sources/rtos_can_driver.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "Sources/rtos_can_driver.o" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

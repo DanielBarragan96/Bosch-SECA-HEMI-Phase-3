@@ -13,8 +13,8 @@
  	 \date 	27/03/2019
  */
 
-#ifndef CAN_DRIVER_H_
-#define CAN_DRIVER_H_
+#ifndef RTOS_CAN_DRIVER_H_
+#define RTOS_CAN_DRIVER_H_
 
 #include "S32K144.h"
 
@@ -115,4 +115,4 @@ CAN_tx_status_t CAN_get_tx_status(CAN_Type* base);
  */
 void CAN_clear_tx_and_rx_flags(CAN_Type* base);
 
-#endif /* CAN_DRIVER_H_ */
+#endif /* RTOS_CAN_DRIVER_H_ */
