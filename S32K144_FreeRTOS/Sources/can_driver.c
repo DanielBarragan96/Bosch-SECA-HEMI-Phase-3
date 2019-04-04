@@ -13,7 +13,7 @@
  	 \date 	27/03/2019
  */
 
-#include "rtos_can_driver.h"
+#include "can_driver.h"
 
 /** Defines the initial value for the variables*/
 #define INIT_VAL				(0)
@@ -93,71 +93,71 @@ static uint32_t RxDATA[DATA_SIZE];
 /** This function delays the microprocesor*/
 static void Delay(uint32_t delay);
 
-///** This function initializes the CAN*/
-//void CAN_Init(CAN_Type* base, uint32_t speed)
-//{
-//	/** Counter to clean the RAM*/
-//	uint8_t counter;
-//
-//	/** For CAN0*/
-//	if(CAN0 == base)
-//	{
-//		/** Enables the peripheral clock*/
-//		PCC->PCCn[PCC_FlexCAN0_INDEX] |= PCC_PCCn_CGC_MASK;
-//	}
-//
-//	/** For CAN1*/
-//	else if(CAN1 == base)
-//	{
-//		/** Enables the peripheral clock*/
-//		PCC->PCCn[PCC_FlexCAN1_INDEX] |= PCC_PCCn_CGC_MASK;
-//	}
-//
-//	/** For CAN2*/
-//	else if(CAN2 == base)
-//	{
-//		PCC->PCCn[PCC_FlexCAN2_INDEX] |= PCC_PCCn_CGC_MASK;
-//	}
-//
-//	/** Disables the module*/
-//	base->MCR |= CAN_MCR_MDIS_MASK;
-//	/** Sets the clock source to the oscillator clock*/
-//	base->CTRL1 &= (~CAN_CTRL1_CLKSRC_MASK);
-//	/** Enables the module*/
-//	base->MCR &= (~CAN_MCR_MDIS_MASK);
-//
-//	/** Waits for the module to enter freeze mode, to manage the CTRL and other registers*/
-//	while(!((base->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT));
-//
-//	/** Configures the speed, and other parameters*/
-//	base->CTRL1 = speed;
-//
-//	/** Initializes the MB RAM in 0*/
-//	for(counter = INIT_VAL ; MAX_MSG_BUFFERS > counter ; counter ++)
-//	{
-//		base->RAMn[counter] = INIT_VAL;
-//
-//		/** Sets the ID masks to not check the ID*/
-//		if(MAX_FILTER_BUFFERS > counter)
-//		{
-//			base->RXIMR[counter] = NOT_CHECK_ANY_ID;
-//		}
-//	}
-//
-//	/** Sets the global ID mask to not check any ID*/
-//	CAN0->RXMGMASK = NOT_CHECK_ANY_ID;
-//
-//	/** Enables the MB 4 for reception*/
-//	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = ENABLE_RX_BUFF;
-//
-//	/** CAN FD not used*/
-//	base->MCR = CAN_FD_DISABLE;
-//
-//	/** Waits for the module to exit freeze mode*/
-//	while ((base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
-//	/** Waits for the module to be ready*/
-//	while ((base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
-//}
+/** This function initializes the CAN*/
+void CAN_Init(CAN_Type* base, uint32_t speed)
+{
+	/** Counter to clean the RAM*/
+	uint8_t counter;
+
+	/** For CAN0*/
+	if(CAN0 == base)
+	{
+		/** Enables the peripheral clock*/
+		PCC->PCCn[PCC_FlexCAN0_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** For CAN1*/
+	else if(CAN1 == base)
+	{
+		/** Enables the peripheral clock*/
+		PCC->PCCn[PCC_FlexCAN1_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** For CAN2*/
+	else if(CAN2 == base)
+	{
+		PCC->PCCn[PCC_FlexCAN2_INDEX] |= PCC_PCCn_CGC_MASK;
+	}
+
+	/** Disables the module*/
+	base->MCR |= CAN_MCR_MDIS_MASK;
+	/** Sets the clock source to the oscillator clock*/
+	base->CTRL1 &= (~CAN_CTRL1_CLKSRC_MASK);
+	/** Enables the module*/
+	base->MCR &= (~CAN_MCR_MDIS_MASK);
+
+	/** Waits for the module to enter freeze mode, to manage the CTRL and other registers*/
+	while(!((base->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT));
+
+	/** Configures the speed, and other parameters*/
+	base->CTRL1 = speed;
+
+	/** Initializes the MB RAM in 0*/
+	for(counter = INIT_VAL ; MAX_MSG_BUFFERS > counter ; counter ++)
+	{
+		base->RAMn[counter] = INIT_VAL;
+
+		/** Sets the ID masks to not check the ID*/
+		if(MAX_FILTER_BUFFERS > counter)
+		{
+			base->RXIMR[counter] = NOT_CHECK_ANY_ID;
+		}
+	}
+
+	/** Sets the global ID mask to not check any ID*/
+	CAN0->RXMGMASK = NOT_CHECK_ANY_ID;
+
+	/** Enables the MB 4 for reception*/
+	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = ENABLE_RX_BUFF;
+
+	/** CAN FD not used*/
+	base->MCR = CAN_FD_DISABLE;
+
+	/** Waits for the module to exit freeze mode*/
+	while ((base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
+	/** Waits for the module to be ready*/
+	while ((base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
+}
 
 /** This function sends a message via CAN*/
 void CAN_send_message(CAN_Type* base, uint16_t ID, uint32_t* msg, uint8_t msg_size, uint8_t DLC)

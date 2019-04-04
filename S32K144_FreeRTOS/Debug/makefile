@@ -66,7 +66,7 @@ S32K144_FreeRTOS.siz \
 all: warning-messages explicit-dependencies S32K144_FreeRTOS.elf secondary-outputs
 
 # Tool invocations
-S32K144_FreeRTOS.elf: $(OBJS) D:/Documents/GitHub/Bosch-SECA-HEMI-Phase-3/S32K144_FreeRTOS/Project_Settings/Linker_Files/S32K144_64_flash.ld $(USER_OBJS)
+S32K144_FreeRTOS.elf: $(OBJS) E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/Project_Settings/Linker_Files/S32K144_64_flash.ld $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Executing target #30 $@'
 	@echo 'Invoking: Standard S32DS C Linker'

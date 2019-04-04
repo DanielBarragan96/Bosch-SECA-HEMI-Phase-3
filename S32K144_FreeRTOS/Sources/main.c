@@ -54,11 +54,7 @@
   #include "Init_Config.h"
 #endif
 #include "S32K144.h"
-<<<<<<< HEAD
 
-=======
-#include "rtos_can_driver.h"
->>>>>>> a3dd161c8022f4657cb604d20d963ad7e7804d23
 #include "transceiver.h"
 #include "clocks_and_modes.h"
 #include "can_driver.h"
@@ -115,15 +111,9 @@ int main(void)
     PEX_RTOS_INIT();                 /* Initialization of the selected RTOS. Macro is defined by the RTOS component. */
   #endif
   /*** End of Processor Expert internal initialization.                    ***/
-<<<<<<< HEAD
 
   /* All of the code is in rtos.c file */
 
-=======
-
-  /* All of the code is in rtos.c file */
-
->>>>>>> a3dd161c8022f4657cb604d20d963ad7e7804d23
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
   #ifdef PEX_RTOS_START
