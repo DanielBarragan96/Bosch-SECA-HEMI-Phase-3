@@ -45,8 +45,8 @@ Sources/main.o: ../Sources/main.c ../Generated_Code/Cpu.h \
  E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/portable/GCC/ARM_CM4F/portmacro.h \
  E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/mpu_wrappers.h \
  E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h \
- ../Sources/can_driver.h ../Sources/transceiver.h \
- ../Sources/clocks_and_modes.h
+ ../Sources/transceiver.h ../Sources/clocks_and_modes.h \
+ ../Sources/can_driver.h
 
 ../Generated_Code/Cpu.h:
 
@@ -144,8 +144,8 @@ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include
 
 E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h:
 
-../Sources/can_driver.h:
-
 ../Sources/transceiver.h:
 
 ../Sources/clocks_and_modes.h:
+
+../Sources/can_driver.h:

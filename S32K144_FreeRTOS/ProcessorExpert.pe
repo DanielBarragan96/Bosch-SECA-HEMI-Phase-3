@@ -563,7 +563,7 @@
       <CPUDB_Settings>
         <CpuType>S32K144_100</CpuType>
         <ActualClock>4</ActualClock>
-        <ActualClockLow>32.768000000000</ActualClockLow>
+        <ActualClockLow>8.240000000000</ActualClockLow>
         <DeviceNamesDefines>
           <EmptySection_DummyValue />
         </DeviceNamesDefines>
@@ -9904,7 +9904,7 @@
       <ItemState>
         <ItemSymbol>IntOsc</ItemSymbol>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Value>32.768</Value>
+        <Value>8.24</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>InitializeSlowTRIM</ItemSymbol>
@@ -10081,7 +10081,7 @@
         <ReadOnly>false</ReadOnly>
         <ListItemCount>1</ListItemCount>
         <UserReadOnly>false</UserReadOnly>
-        <Expanded>false</Expanded>
+        <Expanded>true</Expanded>
         <ItemsTypeState>CPUs\_S32K\CPU_SystemClocksSpeedModeSettings_S32KFamily_SDK.item</ItemsTypeState>
       </ItemState>
       <ItemState>

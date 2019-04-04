@@ -23,7 +23,7 @@
 "./SDK/rtos/FreeRTOS_S32K/Source/event_groups.o"
 "./SDK/rtos/FreeRTOS_S32K/Source/croutine.o"
 "./Sources/transceiver.o"
-"./Sources/rtos.o"
+"./Sources/rtos_driver.o"
 "./Sources/main.o"
 "./Sources/clocks_and_modes.o"
 "./Sources/can_driver.o"

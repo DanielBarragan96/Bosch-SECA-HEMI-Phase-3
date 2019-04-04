@@ -87,8 +87,8 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.634634735" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CPU_S32K144HFT0VLLT"/>
 								</option>
-								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi.781990723" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi.hard" valueType="enumerated"/>
-								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit.2003470429" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit.fpv4spd16" valueType="enumerated"/>
+								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi.781990723" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi" useByScannerDiscovery="false" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.abi.hard" valueType="enumerated"/>
+								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit.2003470429" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit" useByScannerDiscovery="false" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.option.target.fpu.unit.fpv4spd16" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.499350337" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.2098927034" name="Standard S32DS C++ Compiler" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler">
@@ -143,8 +143,8 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1731586497" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CPU_S32K144HFT0VLLT"/>
 								</option>
-								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi.1666448532" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi.hard" valueType="enumerated"/>
-								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit.454081790" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit.fpv4spd16" valueType="enumerated"/>
+								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi.1666448532" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi" useByScannerDiscovery="false" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.abi.hard" valueType="enumerated"/>
+								<option id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit.454081790" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit" useByScannerDiscovery="false" value="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.cpp.compiler.option.target.fpu.unit.fpv4spd16" valueType="enumerated"/>
 							</tool>
 							<tool id="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.linker.328994736" name="Standard S32DS C Linker" superClass="com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.linker">
 								<option id="com.freescale.s32ds.cross.gnu.tool.c.linker.option.gcsections.372568216" name="Remove unused sections (-Xlinker --gc-sections)" superClass="com.freescale.s32ds.cross.gnu.tool.c.linker.option.gcsections" value="true" valueType="boolean"/>
