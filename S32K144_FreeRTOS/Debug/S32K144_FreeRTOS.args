@@ -23,12 +23,16 @@
 "./SDK/rtos/FreeRTOS_S32K/Source/event_groups.o"
 "./SDK/rtos/FreeRTOS_S32K/Source/croutine.o"
 "./Sources/transceiver.o"
+<<<<<<< HEAD
 "./Sources/rtos_driver.o"
+=======
+"./Sources/rtos_can_driver.o"
+>>>>>>> a3dd161c8022f4657cb604d20d963ad7e7804d23
 "./Sources/main.o"
 "./Sources/clocks_and_modes.o"
 "./Sources/can_driver.o"
 -T
-"E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/Project_Settings/Linker_Files/S32K144_64_flash.ld"
+"D:/Documents/GitHub/Bosch-SECA-HEMI-Phase-3/S32K144_FreeRTOS/Project_Settings/Linker_Files/S32K144_64_flash.ld"
 -Wl,-Map,"S32K144_FreeRTOS.map"
 -Xlinker
 --gc-sections
@@ -38,4 +42,4 @@
 -mfpu=fpv4-sp-d16
 -specs=nano.specs
 -specs=nosys.specs
---sysroot="E:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib"
+--sysroot="C:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib"

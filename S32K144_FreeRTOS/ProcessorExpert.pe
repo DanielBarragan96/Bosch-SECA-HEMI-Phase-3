@@ -15580,7 +15580,7 @@
         <ItemSymbol>FreeRTOSFileDirectory</ItemSymbol>
         <ReadOnly>true</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>E:\NXP\S32DS_ARM_v1.3\eclipse\ProcessorExpert\..\..\S32DS\S32SDK_S32K144_RTM_1.0.0\rtos\FreeRTOS_S32K\</Value>
+        <Value>C:\NXP\S32DS_ARM_v1.3\eclipse\ProcessorExpert\..\..\S32DS\S32SDK_S32K144_RTM_1.0.0\rtos\FreeRTOS_S32K\</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>VersionSpecificItem</ItemSymbol>
