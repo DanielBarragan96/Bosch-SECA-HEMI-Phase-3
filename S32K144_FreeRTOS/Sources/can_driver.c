@@ -160,10 +160,12 @@ void CAN_Init(CAN_Type* base, uint32_t speed)
 }
 
 /** This function sends a message via CAN*/
-void CAN_send_message(CAN_Type* base, uint16_t ID, uint32_t* msg, uint8_t msg_size, uint8_t DLC)
+void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC)
 {
 	/** Counter to set the message to the MB*/
 	uint16_t counter = INIT_VAL;
+	uint16_t byte_counter = INIT_VAL;
+	uint32_t temp[2] = {INIT_VAL};
 
 	/** Standard ID can only be of 11 bits*/
 	ID &= STD_ID_MASK;
@@ -172,11 +174,20 @@ void CAN_send_message(CAN_Type* base, uint16_t ID, uint32_t* msg, uint8_t msg_si
 	base->IFLAG1 = CLEAR_MB_0;
 
 	/** Sets the message in the CAN tx buffer*/
-	for(counter = INIT_VAL ; counter < msg_size ; counter ++)
+	for(counter = INIT_VAL ; counter < DLC ; counter ++)
 	{
-		base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + counter + MSG_POS] = (*msg);
+		temp[(counter / 4)] |= (uint32_t)((*msg) << ((3 - byte_counter) * 8));
+
 		msg ++;
+		byte_counter ++;
+
+		if(4 == byte_counter)
+		{
+			byte_counter = 0;
+		}
 	}
+	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS] = temp[0];
+	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + 1 + MSG_POS] = temp[1];
 
 	/** Sets the ID to the bits 28-18 (ID bits for standard format)*/
 	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + ID_POS] = (ID << STD_ID_SHIFT);

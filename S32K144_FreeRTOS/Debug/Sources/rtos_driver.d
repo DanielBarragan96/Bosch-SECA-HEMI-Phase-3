@@ -1,4 +1,4 @@
-Sources/rtos_driver.o: ../Sources/rtos_driver.c \
+Sources/rtos_driver.o: ../Sources/rtos_driver.c ../Sources/rtos_driver.h \
  E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/FreeRTOS.h \
  E:/NXP/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/stddef.h \
  E:/NXP/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/ansi_parms.h \
@@ -49,8 +49,16 @@ Sources/rtos_driver.o: ../Sources/rtos_driver.c \
  E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/startup/system_S32K144.h \
  ../Generated_Code/pin_mux.h \
  E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/drivers/inc/pins_driver.h \
- ../Sources/BoardDefines.h ../Sources/can_driver.h \
- E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h
+ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/projdefs.h \
+ ../Sources/can_driver.h \
+ E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h \
+ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/semphr.h \
+ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/queue.h \
+ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/event_groups.h \
+ E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/timers.h \
+ ../Sources/transceiver.h ../Sources/clocks_and_modes.h
+
+../Sources/rtos_driver.h:
 
 E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/FreeRTOS.h:
 
@@ -154,8 +162,20 @@ E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/st
 
 E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/drivers/inc/pins_driver.h:
 
-../Sources/BoardDefines.h:
+E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/projdefs.h:
 
 ../Sources/can_driver.h:
 
 E:/NXP/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h:
+
+E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/semphr.h:
+
+E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/queue.h:
+
+E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/event_groups.h:
+
+E:/S32/workspaceS32DS.ARM/S32K144_FreeRTOS/SDK/rtos/FreeRTOS_S32K/Source/include/timers.h:
+
+../Sources/transceiver.h:
+
+../Sources/clocks_and_modes.h:

@@ -30,15 +30,14 @@ the queue empty. */
 #define EVENT_GROUP_SW						( 2 )
 
 
-
 /*********************************************************************************************/
 
-static TimerHandle_t xButtonLEDTimer = NULL;
 static RTOS_CAN_Handler_t can_handler = { 0 };
-
 static uint32_t task_period = 100U;
+static uint32_t tx_task_period = 1000U;
 static uint16_t ADC_value_received = 0;
 static uint16_t ADC_threshold_LED = 1500;
+
 
 /*********************************************************************************************/
 
@@ -70,16 +69,9 @@ void rtos_start(CAN_Type* base, uint32_t speed)
 	LPSPI1_init_MC33903();   /* Configure SBC via SPI for CAN transceiver operation */
 	/** To here **********************************************************************************************/
 
-	//xTaskCreate( prvQueueReceiveTask, "RX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
-	//xTaskCreate( prvQueueSendTask, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_SEND_TASK_PRIORITY, NULL );
-
-
-	/* Start the tasks and timer running. */
-	vTaskStartScheduler();
-
 }
 
-void rtos_can_tx_thread(void* args)
+void rtos_can_tx_thread_EG(void* args)
 {
 	if (IS_INIT == can_handler.init_val)
 	{
@@ -106,15 +98,37 @@ void rtos_can_tx_thread(void* args)
 	}
 }
 
+void rtos_can_tx_thread_periodic(void *args)
+{
+	uint8_t message_to_send[8] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xFF};
+	if(IS_INIT == can_handler.init_val)
+	{
+		for(;;)
+		{
+			CAN_send_message(CAN0, 0x123, message_to_send, 8);
+
+			vTaskDelay(pdMS_TO_TICKS(tx_task_period));
+		}
+	}
+}
+
 void rtos_can_rx_thread_periodic(void *args)
 {
-
+	uint16_t ID;
+	uint32_t msg[16];
+	uint8_t msg_size;
+	uint8_t DLC;
 
 	if (IS_INIT == can_handler.init_val)
 	{
 		for(;;)
 		{
 			//TODO: Set Rx periodic action
+			if(CAN_get_rx_status(CAN0))
+			{
+				CAN_receive_message(CAN0, &ID, msg, &msg_size, &DLC);
+				CAN_clear_tx_and_rx_flags(CAN0);
+			}
 
 			vTaskDelay(pdMS_TO_TICKS(task_period));
 		}
@@ -134,7 +148,7 @@ void rtos_can_rx_thread_interrupt(void *args)
 	}
 }
 
-void rtos_can_LED_control(void *args)
+void rtos_can_LED_control_thread(void *args)
 {
 	if(IS_INIT == can_handler.init_val)
 	{

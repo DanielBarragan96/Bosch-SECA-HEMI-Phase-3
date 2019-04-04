@@ -58,6 +58,7 @@
 #include "transceiver.h"
 #include "clocks_and_modes.h"
 #include "can_driver.h"
+#include "rtos_driver.h"
 
 #define SEND_ID				(0x511)
 
@@ -67,7 +68,6 @@ volatile int exit_code = 0;
 #include <stdint.h>
 #include <stdbool.h>
 
-extern void rtos_start(void);
 #define PEX_RTOS_START rtos_start
 
 /*!
@@ -82,44 +82,16 @@ extern void rtos_start(void);
 */
 int main(void)
 {
-	/**Disables Watchdog*/
-	WDOG_disable();
 
-	/*********************** NOTE ***************************/
-	/** This module is taken from the driver example FlexCAN*/
-	/********************************************************/
-	/** From here **********************************************************************************************/
-	SOSC_init_8MHz();       /* Initialize system oscillator for 8
-	   MHz xtal */
-	SPLL_init_160MHz();     /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
-	NormalRUNmode_80MHz();  /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
-	/** To here **********************************************************************************************/
+	rtos_start(CAN0, CAN_CTRL1_SPEED_500KBPS);
 
-	CAN_Init(CAN0, CAN_CTRL1_SPEED_500KBPS);
+	xTaskCreate(rtos_can_tx_thread_periodic, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
+	//xTaskCreate(rtos_can_rx_thread_periodic, "RX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
 
-	/*********************** NOTE ***************************/
-	/** This module is taken from the driver example FlexCAN*/
-	/********************************************************/
-	/** From here **********************************************************************************************/
-	PORT_init();             /* Configure ports */
-	LPSPI1_init_master();    /* Initialize LPSPI1 for communication with MC33903 */
-	LPSPI1_init_MC33903();   /* Configure SBC via SPI for CAN transceiver operation */
-	/** To here **********************************************************************************************/
+	/* Start the tasks and timer running. */
+	vTaskStartScheduler();
 
-  /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
-  #ifdef PEX_RTOS_INIT
-    PEX_RTOS_INIT();                 /* Initialization of the selected RTOS. Macro is defined by the RTOS component. */
-  #endif
-  /*** End of Processor Expert internal initialization.                    ***/
-
-  /* All of the code is in rtos.c file */
-
-  /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
-  /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
-  #ifdef PEX_RTOS_START
-    PEX_RTOS_START();                  /* Startup of the selected RTOS. Macro is defined by the RTOS component. */
-  #endif
-  /*** End of RTOS startup code.  ***/
+	for(;;);
 
 	return 0;
 }

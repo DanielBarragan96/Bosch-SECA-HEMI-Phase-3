@@ -70,7 +70,7 @@ void CAN_Init(CAN_Type* base, uint32_t speed);
 
  	 \return void.
  */
-void CAN_send_message(CAN_Type* base, uint16_t ID, uint32_t* msg, uint8_t msg_size, uint8_t DLC);
+void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC);
 
 /*!
  	 \brief This function reads a message received via CAN.
