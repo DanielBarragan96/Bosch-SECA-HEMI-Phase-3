@@ -17,6 +17,8 @@ typedef struct {
 	QueueHandle_t queue;
 }RTOS_CAN_Handler_t;
 
+/*********************************************************************************************/
+
 /* The number of items the queue can hold.  This is 1 as the receive task
 will remove items as they are added, meaning the send task should always find
 the queue empty. */
@@ -115,8 +117,7 @@ void rtos_can_tx_thread_periodic(void *args)
 void rtos_can_rx_thread_periodic(void *args)
 {
 	uint16_t ID;
-	uint32_t msg[16];
-	uint8_t msg_size;
+	uint8_t msg[8] = { 0 };
 	uint8_t DLC;
 
 	if (IS_INIT == can_handler.init_val)
@@ -126,7 +127,7 @@ void rtos_can_rx_thread_periodic(void *args)
 			//TODO: Set Rx periodic action
 			if(CAN_get_rx_status(CAN0))
 			{
-				CAN_receive_message(CAN0, &ID, msg, &msg_size, &DLC);
+				CAN_receive_message(CAN0, &ID, msg, &DLC);
 				CAN_clear_tx_and_rx_flags(CAN0);
 			}
 

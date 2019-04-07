@@ -75,11 +75,13 @@
 #define RX_MB_FLAG_SHIFT		(0x04)
 
 /** Disable CAN FS*/
-#define CAN_FD_DISABLE			(0x0000001F)
+#define CAN_FD_DISABLE			(0x0003001F)
 /** Offset to calculate the msg_size from DLC*/
 #define MESSAGE_SIZE_OFF		(0x03)
 /** Delay for the Tx*/
-#define CAN_DELAY					(10000)
+#define CAN_DELAY				(10000)
+
+#define CAN_RX_MSG_MSB_MASK		(0xFF000000)
 
 /** Variable to store the code of the Rx MB*/
 static uint32_t RxCODE;
@@ -202,7 +204,7 @@ void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC)
 }
 
 /** This function receives a message from CAN*/
-void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint32_t* msg, uint8_t* msg_size, uint8_t* DLC)
+void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint8_t* msg, uint8_t* DLC)
 {
 	/** Counter to get the message*/
 	uint8_t counter = INIT_VAL;
@@ -215,23 +217,33 @@ void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint32_t* msg, uint8_t* m
 	RxLENGTH = (base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_WMBn_CS_DLC_MASK);
 	RxLENGTH  >>= CAN_WMBn_CS_DLC_SHIFT;
 
-	/** Gets each of the data*/
-	for(counter = INIT_VAL ; counter < RxLENGTH ; counter ++)
+//	/** Gets each of the data*/
+//	for(counter = INIT_VAL ; counter < RxLENGTH ; counter ++)
+//	{
+//		RxDATA[counter] = base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS + counter];
+//		/** Sets the data to the msg pointer*/
+//		(*msg) = RxDATA[counter];
+//		msg ++;
+//	}
+
+	for(counter = 0; counter < RxLENGTH; counter ++)
 	{
-		RxDATA[counter] = base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS + counter];
-		/** Sets the data to the msg pointer*/
-		(*msg) = RxDATA[counter];
+		(*msg) = (uint8_t)(((base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS]) & CAN_RX_MSG_MSB_MASK) >> 24);
+		base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS] <<= 8;
 		msg ++;
 	}
+
+
 
 	/** Clears the reception flag*/
 	base->IFLAG1 = CLEAR_MB_4;
 
 	/** Returns the data*/
 	(*ID) = (uint16_t)RxID;
-	/** Sets the message size*/
-	(*msg_size) = (uint8_t)((RxLENGTH + MESSAGE_SIZE_OFF) / DLC_TO_MSG_SIZE_DIV);
+	/** Sets the DLC*/
 	(*DLC) = (uint8_t)(RxLENGTH);
+
+	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] |= 0x04000000;
 }
 
 /** Gets the flag of the RX buffer*/
