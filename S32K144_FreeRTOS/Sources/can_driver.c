@@ -197,10 +197,8 @@ void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC)
 	/** Sets the DLC and the CAN command to transmit*/
 	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = (DLC << CAN_WMBn_CS_DLC_SHIFT) | TX_BUFF_TRANSMITT;
 
-	/** Waits for the CAN to end the transmission*/
-	Delay(CAN_DELAY);
-	/** Clears the Rx MB flag*/
-	base->IFLAG1 = CLEAR_MB_4;
+	while(!CAN_get_tx_status(CAN0));
+	base->IFLAG1 = CLEAR_MB_0;
 }
 
 /** This function receives a message from CAN*/
@@ -217,23 +215,12 @@ void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint8_t* msg, uint8_t* DL
 	RxLENGTH = (base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_WMBn_CS_DLC_MASK);
 	RxLENGTH  >>= CAN_WMBn_CS_DLC_SHIFT;
 
-//	/** Gets each of the data*/
-//	for(counter = INIT_VAL ; counter < RxLENGTH ; counter ++)
-//	{
-//		RxDATA[counter] = base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS + counter];
-//		/** Sets the data to the msg pointer*/
-//		(*msg) = RxDATA[counter];
-//		msg ++;
-//	}
-
 	for(counter = 0; counter < RxLENGTH; counter ++)
 	{
 		(*msg) = (uint8_t)(((base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS]) & CAN_RX_MSG_MSB_MASK) >> 24);
 		base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS] <<= 8;
 		msg ++;
 	}
-
-
 
 	/** Clears the reception flag*/
 	base->IFLAG1 = CLEAR_MB_4;

@@ -85,7 +85,7 @@ int main(void)
 
 	rtos_start(CAN0, CAN_CTRL1_SPEED_500KBPS);
 
-	//xTaskCreate(rtos_can_tx_thread_periodic, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
+	xTaskCreate(rtos_can_tx_thread_periodic, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
 	xTaskCreate(rtos_can_rx_thread_periodic, "RX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
 
 	/* Start the tasks and timer running. */

@@ -1542,17 +1542,12 @@ Discarded input sections
  .text          0x00000000        0x0 ./Sources/rtos_driver.o
  .data          0x00000000        0x0 ./Sources/rtos_driver.o
  .bss           0x00000000        0x0 ./Sources/rtos_driver.o
- .data.tx_task_period
-                0x00000000        0x4 ./Sources/rtos_driver.o
  .bss.ADC_value_received
                 0x00000000        0x2 ./Sources/rtos_driver.o
  .data.ADC_threshold_LED
                 0x00000000        0x2 ./Sources/rtos_driver.o
  .text.rtos_can_tx_thread_EG
                 0x00000000       0x4c ./Sources/rtos_driver.o
- .rodata        0x00000000        0x8 ./Sources/rtos_driver.o
- .text.rtos_can_tx_thread_periodic
-                0x00000000       0x64 ./Sources/rtos_driver.o
  .text.rtos_can_rx_thread_interrupt
                 0x00000000       0x30 ./Sources/rtos_driver.o
  .text.rtos_can_LED_control_thread
@@ -1698,10 +1693,6 @@ Discarded input sections
  .data          0x00000000        0x0 ./Sources/can_driver.o
  .bss           0x00000000        0x0 ./Sources/can_driver.o
  .bss.RxDATA    0x00000000        0x8 ./Sources/can_driver.o
- .text.CAN_send_message
-                0x00000000       0xd4 ./Sources/can_driver.o
- .text.CAN_get_tx_status
-                0x00000000       0x20 ./Sources/can_driver.o
  .text.Delay    0x00000000       0x2c ./Sources/can_driver.o
  .debug_macro   0x00000000      0x86e ./Sources/can_driver.o
  .debug_macro   0x00000000       0x19 ./Sources/can_driver.o
@@ -1841,7 +1832,7 @@ LOAD e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-
  .FlashConfig   0x00000400       0x10 ./Project_Settings/Startup_Code/startup_S32K144.o
                 0x00000410                . = ALIGN (0x4)
 
-.text           0x00000410     0x2df4
+.text           0x00000410     0x2f84
                 0x00000410                . = ALIGN (0x4)
  *(.text)
  .text          0x00000410       0x5c e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
@@ -2186,119 +2177,129 @@ LOAD e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-
  .text.rtos_start
                 0x00002d84       0x70 ./Sources/rtos_driver.o
                 0x00002d84                rtos_start
+ .text.rtos_can_tx_thread_periodic
+                0x00002df4       0x64 ./Sources/rtos_driver.o
+                0x00002df4                rtos_can_tx_thread_periodic
  .text.rtos_can_rx_thread_periodic
-                0x00002df4       0x70 ./Sources/rtos_driver.o
-                0x00002df4                rtos_can_rx_thread_periodic
- .text.main     0x00002e64       0x40 ./Sources/main.o
-                0x00002e64                main
+                0x00002e58       0x70 ./Sources/rtos_driver.o
+                0x00002e58                rtos_can_rx_thread_periodic
+ .text.main     0x00002ec8       0x64 ./Sources/main.o
+                0x00002ec8                main
  .text.SOSC_init_8MHz
-                0x00002ea4       0x4c ./Sources/clocks_and_modes.o
-                0x00002ea4                SOSC_init_8MHz
+                0x00002f2c       0x4c ./Sources/clocks_and_modes.o
+                0x00002f2c                SOSC_init_8MHz
  .text.SPLL_init_160MHz
-                0x00002ef0       0x64 ./Sources/clocks_and_modes.o
-                0x00002ef0                SPLL_init_160MHz
+                0x00002f78       0x64 ./Sources/clocks_and_modes.o
+                0x00002f78                SPLL_init_160MHz
  .text.NormalRUNmode_80MHz
-                0x00002f54       0x20 ./Sources/clocks_and_modes.o
-                0x00002f54                NormalRUNmode_80MHz
+                0x00002fdc       0x20 ./Sources/clocks_and_modes.o
+                0x00002fdc                NormalRUNmode_80MHz
  .text.CAN_Init
-                0x00002f74      0x110 ./Sources/can_driver.o
-                0x00002f74                CAN_Init
+                0x00002ffc      0x110 ./Sources/can_driver.o
+                0x00002ffc                CAN_Init
+ .text.CAN_send_message
+                0x0000310c       0xdc ./Sources/can_driver.o
+                0x0000310c                CAN_send_message
  .text.CAN_receive_message
-                0x00003084       0xe0 ./Sources/can_driver.o
-                0x00003084                CAN_receive_message
+                0x000031e8       0xe0 ./Sources/can_driver.o
+                0x000031e8                CAN_receive_message
  .text.CAN_get_rx_status
-                0x00003164       0x24 ./Sources/can_driver.o
-                0x00003164                CAN_get_rx_status
+                0x000032c8       0x24 ./Sources/can_driver.o
+                0x000032c8                CAN_get_rx_status
+ .text.CAN_get_tx_status
+                0x000032ec       0x20 ./Sources/can_driver.o
+                0x000032ec                CAN_get_tx_status
  .text.CAN_clear_tx_and_rx_flags
-                0x00003188       0x1c ./Sources/can_driver.o
-                0x00003188                CAN_clear_tx_and_rx_flags
- .text.memcpy   0x000031a4       0x16 E:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib/lib/armv7e-m/fpu\libc_nano.a(lib_a-memcpy.o)
-                0x000031a4                memcpy
- .text.memset   0x000031ba       0x10 E:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib/lib/armv7e-m/fpu\libc_nano.a(lib_a-memset.o)
-                0x000031ba                memset
+                0x0000330c       0x1c ./Sources/can_driver.o
+                0x0000330c                CAN_clear_tx_and_rx_flags
+ .text.memcpy   0x00003328       0x16 E:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib/lib/armv7e-m/fpu\libc_nano.a(lib_a-memcpy.o)
+                0x00003328                memcpy
+ .text.memset   0x0000333e       0x10 E:/NXP/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib/lib/armv7e-m/fpu\libc_nano.a(lib_a-memset.o)
+                0x0000333e                memset
  *(.rodata)
- *fill*         0x000031ca        0x2 
- .rodata        0x000031cc        0x8 ./SDK/rtos/FreeRTOS_S32K/Source/timers.o
- .rodata        0x000031d4        0x5 ./SDK/rtos/FreeRTOS_S32K/Source/tasks.o
- *fill*         0x000031d9        0x3 
- .rodata        0x000031dc        0xc ./Sources/transceiver.o
- .rodata        0x000031e8        0x3 ./Sources/main.o
+ *fill*         0x0000334e        0x2 
+ .rodata        0x00003350        0x8 ./SDK/rtos/FreeRTOS_S32K/Source/timers.o
+ .rodata        0x00003358        0x5 ./SDK/rtos/FreeRTOS_S32K/Source/tasks.o
+ *fill*         0x0000335d        0x3 
+ .rodata        0x00003360        0xc ./Sources/transceiver.o
+ .rodata        0x0000336c        0x8 ./Sources/rtos_driver.o
+ .rodata        0x00003374        0x7 ./Sources/main.o
  *(.rodata*)
  *(.glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
  *(.eh_frame)
- *fill*         0x000031eb        0x1 
- .eh_frame      0x000031ec        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+ *fill*         0x0000337b        0x1 
+ .eh_frame      0x0000337c        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
  *(.init)
- .init          0x000031ec        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
-                0x000031ec                _init
- .init          0x000031f0        0x8 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
+ .init          0x0000337c        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
+                0x0000337c                _init
+ .init          0x00003380        0x8 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
  *(.fini)
- .fini          0x000031f8        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
-                0x000031f8                _fini
- .fini          0x000031fc        0x8 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
-                0x00003204                . = ALIGN (0x4)
+ .fini          0x00003388        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
+                0x00003388                _fini
+ .fini          0x0000338c        0x8 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
+                0x00003394                . = ALIGN (0x4)
 
-.vfp11_veneer   0x00003204        0x0
+.vfp11_veneer   0x00003394        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x00003204        0x0
+.v4_bx          0x00003394        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x00003204        0x0
+.iplt           0x00003394        0x0
  .iplt          0x00000000        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
-.rel.dyn        0x00003204        0x0
+.rel.dyn        0x00003394        0x0
  .rel.iplt      0x00000000        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x00003204        0x0
-                0x00003204                __exidx_start = .
+.ARM            0x00003394        0x0
+                0x00003394                __exidx_start = .
  *(.ARM.exidx*)
-                0x00003204                __exidx_end = .
+                0x00003394                __exidx_end = .
 
-.ctors          0x00003204        0x0
-                0x00003204                __CTOR_LIST__ = .
+.ctors          0x00003394        0x0
+                0x00003394                __CTOR_LIST__ = .
  *crtbegin.o(.ctors)
  *crtbegin?.o(.ctors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x00003204                __CTOR_END__ = .
+                0x00003394                __CTOR_END__ = .
 
-.dtors          0x00003204        0x0
-                0x00003204                __DTOR_LIST__ = .
+.dtors          0x00003394        0x0
+                0x00003394                __DTOR_LIST__ = .
  *crtbegin.o(.dtors)
  *crtbegin?.o(.dtors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .dtors)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x00003204                __DTOR_END__ = .
+                0x00003394                __DTOR_END__ = .
 
-.preinit_array  0x00003204        0x0
-                0x00003204                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x00003394        0x0
+                0x00003394                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x00003204                PROVIDE (__preinit_array_end, .)
+                0x00003394                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x00003204        0x4
-                0x00003204                PROVIDE (__init_array_start, .)
+.init_array     0x00003394        0x4
+                0x00003394                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
- .init_array    0x00003204        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
-                0x00003208                PROVIDE (__init_array_end, .)
+ .init_array    0x00003394        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+                0x00003398                PROVIDE (__init_array_end, .)
 
-.fini_array     0x00003208        0x4
-                0x00003208                PROVIDE (__fini_array_start, .)
+.fini_array     0x00003398        0x4
+                0x00003398                PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x00003208        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
-                0x0000320c                PROVIDE (__fini_array_end, .)
-                0x0000320c                __etext = .
-                0x0000320c                __DATA_ROM = .
+ .fini_array    0x00003398        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+                0x0000339c                PROVIDE (__fini_array_end, .)
+                0x0000339c                __etext = .
+                0x0000339c                __DATA_ROM = .
 
 .interrupts_ram
                 0x1fff8000      0x400
@@ -2313,7 +2314,7 @@ LOAD e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-
                 0x1fff8000                __VECTOR_RAM = DEFINED (__flash_vector_table__)?ORIGIN (m_interrupts):__VECTOR_RAM__
                 0x00000400                __RAM_VECTOR_TABLE_SIZE = DEFINED (__flash_vector_table__)?0x0:(__interrupts_ram_end__ - __interrupts_ram_start__)
 
-.data           0x1fff8400       0x10 load address 0x0000320c
+.data           0x1fff8400       0x14 load address 0x0000339c
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __DATA_RAM = .
                 0x1fff8400                __data_start__ = .
@@ -2325,25 +2326,27 @@ LOAD e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-
                 0x1fff8404        0x4 ./SDK/rtos/FreeRTOS_S32K/Source/portable/MemMang/heap_2.o
  .data.task_period
                 0x1fff8408        0x4 ./Sources/rtos_driver.o
+ .data.tx_task_period
+                0x1fff840c        0x4 ./Sources/rtos_driver.o
  *(.jcr*)
- .jcr           0x1fff840c        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
- .jcr           0x1fff840c        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
-                0x1fff8410                . = ALIGN (0x4)
-                0x1fff8410                __data_end__ = .
-                0x0000321c                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
-                0x0000321c                __CODE_ROM = __DATA_END
+ .jcr           0x1fff8410        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+ .jcr           0x1fff8410        0x4 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
+                0x1fff8414                . = ALIGN (0x4)
+                0x1fff8414                __data_end__ = .
+                0x000033b0                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
+                0x000033b0                __CODE_ROM = __DATA_END
 
-.igot.plt       0x1fff8410        0x0 load address 0x0000321c
+.igot.plt       0x1fff8414        0x0 load address 0x000033b0
  .igot.plt      0x00000000        0x0 e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
-.code           0x1fff8410        0x0 load address 0x0000321c
-                0x1fff8410                . = ALIGN (0x4)
-                0x1fff8410                __CODE_RAM = .
-                0x1fff8410                __code_start__ = .
+.code           0x1fff8414        0x0 load address 0x000033b0
+                0x1fff8414                . = ALIGN (0x4)
+                0x1fff8414                __CODE_RAM = .
+                0x1fff8414                __code_start__ = .
  *(.code_ram)
-                0x1fff8410                . = ALIGN (0x4)
-                0x1fff8410                __code_end__ = .
-                0x0000321c                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
+                0x1fff8414                . = ALIGN (0x4)
+                0x1fff8414                __code_end__ = .
+                0x000033b0                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
 
 .customSectionBlock
  *(.customSection)
@@ -2497,7 +2500,7 @@ LOAD e:/nxp/s32ds_arm_v1.3/cross_tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region m_data_2 overflowed with stack and heap)
 OUTPUT(S32K144_FreeRTOS.elf elf32-littlearm)
 
-.debug_line     0x00000000     0x4cdd
+.debug_line     0x00000000     0x4ce1
  .debug_line    0x00000000       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
  .debug_line    0x00000083      0x322 ./SDK/platform/devices/S32K144/startup/system_S32K144.o
  .debug_line    0x000003a5      0x292 ./SDK/platform/devices/startup.o
@@ -2510,11 +2513,11 @@ OUTPUT(S32K144_FreeRTOS.elf elf32-littlearm)
  .debug_line    0x0000312b      0x594 ./SDK/rtos/FreeRTOS_S32K/Source/event_groups.o
  .debug_line    0x000036bf      0x253 ./Sources/transceiver.o
  .debug_line    0x00003912      0x7cf ./Sources/rtos_driver.o
- .debug_line    0x000040e1      0x740 ./Sources/main.o
- .debug_line    0x00004821      0x210 ./Sources/clocks_and_modes.o
- .debug_line    0x00004a31      0x2ac ./Sources/can_driver.o
+ .debug_line    0x000040e1      0x741 ./Sources/main.o
+ .debug_line    0x00004822      0x210 ./Sources/clocks_and_modes.o
+ .debug_line    0x00004a32      0x2af ./Sources/can_driver.o
 
-.debug_info     0x00000000     0x6db3
+.debug_info     0x00000000     0x6dad
  .debug_info    0x00000000       0x8c ./Project_Settings/Startup_Code/startup_S32K144.o
  .debug_info    0x0000008c      0x4f2 ./SDK/platform/devices/S32K144/startup/system_S32K144.o
  .debug_info    0x0000057e      0x3e4 ./SDK/platform/devices/startup.o
@@ -2529,9 +2532,9 @@ OUTPUT(S32K144_FreeRTOS.elf elf32-littlearm)
  .debug_info    0x00005724      0x7e2 ./Sources/rtos_driver.o
  .debug_info    0x00005f06      0x5e9 ./Sources/main.o
  .debug_info    0x000064ef      0x262 ./Sources/clocks_and_modes.o
- .debug_info    0x00006751      0x662 ./Sources/can_driver.o
+ .debug_info    0x00006751      0x65c ./Sources/can_driver.o
 
-.debug_abbrev   0x00000000     0x1447
+.debug_abbrev   0x00000000     0x1402
  .debug_abbrev  0x00000000       0x14 ./Project_Settings/Startup_Code/startup_S32K144.o
  .debug_abbrev  0x00000014      0x118 ./SDK/platform/devices/S32K144/startup/system_S32K144.o
  .debug_abbrev  0x0000012c      0x101 ./SDK/platform/devices/startup.o
@@ -2546,7 +2549,7 @@ OUTPUT(S32K144_FreeRTOS.elf elf32-littlearm)
  .debug_abbrev  0x00000f36      0x169 ./Sources/rtos_driver.o
  .debug_abbrev  0x0000109f      0x118 ./Sources/main.o
  .debug_abbrev  0x000011b7       0xc2 ./Sources/clocks_and_modes.o
- .debug_abbrev  0x00001279      0x1ce ./Sources/can_driver.o
+ .debug_abbrev  0x00001279      0x189 ./Sources/can_driver.o
 
 .debug_aranges  0x00000000      0x630
  .debug_aranges

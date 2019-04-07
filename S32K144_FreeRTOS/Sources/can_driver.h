@@ -106,6 +106,7 @@ CAN_rx_status_t CAN_get_rx_status(CAN_Type* base);
  */
 CAN_tx_status_t CAN_get_tx_status(CAN_Type* base);
 
+
 /*!
  	 \brief This function erases the Tx and Rx buffer flags.
 
