@@ -68,6 +68,8 @@ volatile int exit_code = 0;
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MSG_ID				(0x30)
+
 #define PEX_RTOS_START rtos_start
 
 /*!
@@ -83,10 +85,14 @@ volatile int exit_code = 0;
 int main(void)
 {
 
+	uint8_t msg[7] = {0x08, 0x00, 0x00, 0x08, 0x01, 0x03, 0x05};
+
 	rtos_start(CAN0, CAN_CTRL1_SPEED_500KBPS);
 
-	xTaskCreate(rtos_can_tx_thread_periodic, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
-	xTaskCreate(rtos_can_rx_thread_periodic, "RX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
+	rtos_can_set_sw_msg(MSG_ID, msg, sizeof(msg));
+
+	xTaskCreate(rtos_can_tx_thread_EG, "TX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
+	xTaskCreate(rtos_can_rx_thread_interruption, "RX", configMINIMAL_STACK_SIZE, NULL, mainQUEUE_RECEIVE_TASK_PRIORITY, NULL );
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();

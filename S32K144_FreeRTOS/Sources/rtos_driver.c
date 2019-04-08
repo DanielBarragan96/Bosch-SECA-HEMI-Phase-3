@@ -7,18 +7,6 @@
 
 #include "rtos_driver.h"
 
-/*********************************************************************************************/
-
-typedef struct {
-	uint8_t init_val;
-	SemaphoreHandle_t sem_rx_binary;
-	SemaphoreHandle_t mutex;
-	EventGroupHandle_t event_group;
-	QueueHandle_t queue;
-}RTOS_CAN_Handler_t;
-
-/*********************************************************************************************/
-
 /* The number of items the queue can hold.  This is 1 as the receive task
 will remove items as they are added, meaning the send task should always find
 the queue empty. */
@@ -31,6 +19,32 @@ the queue empty. */
 #define EVENT_GROUP_ADC						( 1 )
 #define EVENT_GROUP_SW						( 2 )
 
+#define LED1            15U
+#define LED2            16U
+#define LED_GPIO        PTD
+#define LED_PORT        PORTD
+#define LED_PORT_PCC    PCC_PORTD_CLOCK
+#define BTN_GPIO        PTC
+#define BTN_PIN         13U
+#define BTN_PORT        PORTC
+#define BTN_PORT_PCC    PCC_PORTC_CLOCK
+#define BTN_PORT_IRQn   PORTC_IRQn
+
+#define MB_4_INTERRUPT				(0x10)
+#define CLEAR_ALL_FLAGS				(0xFFFFFFFE)
+
+
+/*********************************************************************************************/
+
+typedef struct {
+	uint8_t init_val;
+	SemaphoreHandle_t sem_rx_binary;
+	SemaphoreHandle_t mutex;
+	EventGroupHandle_t event_group;
+	QueueHandle_t queue;
+}RTOS_CAN_Handler_t;
+
+/*********************************************************************************************/
 
 /*********************************************************************************************/
 
@@ -40,8 +54,30 @@ static uint32_t tx_task_period = 1000U;
 static uint16_t ADC_value_received = 0;
 static uint16_t ADC_threshold_LED = 1500;
 
+static uint8_t ID_SW = 0;
+static uint8_t msg_SW[8] = {0};
+static uint8_t DLC_SW = 0;
+
 
 /*********************************************************************************************/
+
+void CAN_RX_Interrupt(void)
+{
+	if(CAN0->IFLAG1 & MB_4_INTERRUPT)
+	{
+		xSemaphoreGiveFromISR(can_handler.sem_rx_binary, pdFALSE);
+	}
+
+	CAN0->IFLAG1 = CLEAR_ALL_FLAGS;
+}
+
+void SW3_ISR(void)
+{
+	xEventGroupSetBitsFromISR(can_handler.event_group, EVENT_GROUP_SW, pdFALSE);
+
+	/* Clear the interrupt before leaving. */
+	PORT_HAL_ClearPortIntFlagCmd(BTN_PORT);
+}
 
 void rtos_start(CAN_Type* base, uint32_t speed)
 {
@@ -54,27 +90,69 @@ void rtos_start(CAN_Type* base, uint32_t speed)
 	/*********************** NOTE ***************************/
 	/** This module is taken from the driver example FlexCAN*/
 	/********************************************************/
-	/** From here **********************************************************************************************/
+	/** From here *****************************************************************************/
 	SOSC_init_8MHz();       /* Initialize system oscillator for 8 MHz xtal */
 	SPLL_init_160MHz();     /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
 	NormalRUNmode_80MHz();  /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
-	/** To here **********************************************************************************************/
+	/** To here *******************************************************************************/
 
 	CAN_Init(base, speed);
+
+#if(!RX_MODE)
+	CAN_enable_rx_interruption(base);
+
+	INT_SYS_InstallHandler(CAN0_ORed_0_15_MB_IRQn, CAN_RX_Interrupt, (isr_t *)NULL);
+	INT_SYS_EnableIRQ(CAN0_ORed_0_15_MB_IRQn);
+	INT_SYS_SetPriority(CAN0_ORed_0_15_MB_IRQn, 3);
+#endif
 
 	/*********************** NOTE ***************************/
 	/** This module is taken from the driver example FlexCAN*/
 	/********************************************************/
-	/** From here **********************************************************************************************/
+	/** From here *****************************************************************************/
 	PORT_init();             /* Configure ports */
 	LPSPI1_init_master();    /* Initialize LPSPI1 for communication with MC33903 */
 	LPSPI1_init_MC33903();   /* Configure SBC via SPI for CAN transceiver operation */
-	/** To here **********************************************************************************************/
+	/** To here *******************************************************************************/
 
+	/**************** LED CONFIGURATION ********************/
+	 /* Configure clock source */
+	PCC_HAL_SetClockMode(PCC, LED_PORT_PCC, false);
+	PCC_HAL_SetClockSourceSel(PCC, LED_PORT_PCC, CLK_SRC_FIRC);
+	PCC_HAL_SetClockMode(PCC, LED_PORT_PCC, true);
+
+	PCC_HAL_SetClockMode(PCC, BTN_PORT_PCC, false);
+	PCC_HAL_SetClockSourceSel(PCC, BTN_PORT_PCC, CLK_SRC_FIRC);
+	PCC_HAL_SetClockMode(PCC, BTN_PORT_PCC, true);
+
+	/* Configure ports */
+	PORT_HAL_SetMuxModeSel(LED_PORT, LED1,      PORT_MUX_AS_GPIO);
+	PORT_HAL_SetMuxModeSel(LED_PORT, LED2,      PORT_MUX_AS_GPIO);
+	PORT_HAL_SetMuxModeSel(BTN_PORT, BTN_PIN,   PORT_MUX_AS_GPIO);
+	PORT_HAL_SetPinIntSel(BTN_PORT, BTN_PIN, PORT_INT_RISING_EDGE);
+
+	/* Change LED1, LED2 to outputs. */
+	GPIO_HAL_SetPinsDirection(LED_GPIO,  (1 << LED1) | (1 << LED2));
+
+	/* Change BTN1 to input */
+	GPIO_HAL_SetPinsDirection(BTN_GPIO, ~(1 << BTN_PIN));
+
+	/* Start with LEDs off. */
+	GPIO_HAL_SetPins(LED_GPIO, (1 << LED1) | (1 << LED2));
+
+	/* Install Button interrupt handler */
+    INT_SYS_InstallHandler(BTN_PORT_IRQn, SW3_ISR, (isr_t *)NULL);
+    /* Enable Button interrupt handler */
+    INT_SYS_EnableIRQ(BTN_PORT_IRQn);
+
+    /* The interrupt calls an interrupt safe API function - so its priority must
+    be equal to or lower than configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY. */
+    INT_SYS_SetPriority( BTN_PORT_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY );
 }
 
 void rtos_can_tx_thread_EG(void* args)
 {
+
 	if (IS_INIT == can_handler.init_val)
 	{
 		EventBits_t tx_event;
@@ -93,8 +171,7 @@ void rtos_can_tx_thread_EG(void* args)
 
 			else if(EVENT_GROUP_SW == tx_event)
 			{
-				//TODO: Set SW action
-
+				CAN_send_message(CAN0, ID_SW, msg_SW, DLC_SW);
 			}
 		}
 	}
@@ -114,6 +191,26 @@ void rtos_can_tx_thread_periodic(void *args)
 	}
 }
 
+#if(!RX_MODE)
+void rtos_can_rx_thread_interruption(void *args)
+{
+	uint16_t ID;
+	uint8_t msg[8] = { 0 };
+	uint8_t DLC;
+
+	if(IS_INIT == can_handler.init_val)
+	{
+		for(;;)
+		{
+			xSemaphoreTake(can_handler.sem_rx_binary, portMAX_DELAY);
+
+			CAN_receive_message(CAN0, &ID, msg, &DLC);
+		}
+	}
+}
+#endif
+
+#if RX_MODE
 void rtos_can_rx_thread_periodic(void *args)
 {
 	uint16_t ID;
@@ -135,26 +232,12 @@ void rtos_can_rx_thread_periodic(void *args)
 		}
 	}
 }
-
-void rtos_can_rx_thread_interrupt(void *args)
-{
-
-
-	if (IS_INIT == can_handler.init_val)
-	{
-		for(;;)
-		{
-			xSemaphoreTake(can_handler.sem_rx_binary, portMAX_DELAY);
-		}
-	}
-}
+#endif
 
 void rtos_can_LED_control_thread(void *args)
 {
 	if(IS_INIT == can_handler.init_val)
 	{
-
-
 		for(;;)
 		{
 			if(ADC_threshold_LED < ADC_value_received)
@@ -168,40 +251,18 @@ void rtos_can_LED_control_thread(void *args)
 	}
 }
 
-/* The ISR executed when the user button is pushed. */
-//void vPort_C_ISRHandler( void )
-//{
-    //portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+void rtos_can_set_sw_msg(uint8_t ID, uint8_t *msg, uint8_t DLC)
+{
+	uint8_t counter = 0;
 
-	/* The button was pushed, so ensure the LED is on before resetting the
-	LED timer.  The LED timer will turn the LED off if the button is not
-	pushed within 5000ms. */
-    //GPIO_HAL_ClearPins(LED_GPIO, (1 << LED1));
-	/* This interrupt safe FreeRTOS function can be called from this interrupt
-	because the interrupt priority is below the
-	configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY setting in FreeRTOSConfig.h. */
-	//xTimerResetFromISR( xButtonLEDTimer, &xHigherPriorityTaskWoken );
+	for(counter = 0 ; counter < DLC ; counter ++)
+	{
+		msg_SW[counter] = (*msg);
+		msg ++;
+	}
 
-	/* Clear the interrupt before leaving. */
-	//PORT_HAL_ClearPortIntFlagCmd(BTN_PORT);
+	ID_SW = ID;
+	DLC_SW = DLC;
+}
 
-	/* If calling xTimerResetFromISR() caused a task (in this case the timer
-	service/daemon task) to unblock, and the unblocked task has a priority
-	higher than or equal to the task that was interrupted, then
-	xHigherPriorityTaskWoken will now be set to pdTRUE, and calling
-	portEND_SWITCHING_ISR() will ensure the unblocked task runs next. */
-	//portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
-//}
-
-//static void prvButtonLEDTimerCallback( TimerHandle_t xTimer )
-//{
-	/* Casting xTimer to void because it is unused */
-	//(void)xTimer;
-
-	/* The timer has expired - so no button pushes have occurred in the last
-	five seconds - turn the LED off. */
-	//GPIO_HAL_SetPins(LED_GPIO, (1 << LED1));
-//}
-
-/*-----------------------------------------------------------*/
 

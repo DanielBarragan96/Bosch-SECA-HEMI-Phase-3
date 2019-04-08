@@ -2,10 +2,20 @@
 <launchConfiguration type="com.pemicro.debug.gdbjtag.pne.launchConfigurationType">
 <listAttribute key="com.pemicro.debug.gdbjtag.pne.ELVES"/>
 <intAttribute key="com.pemicro.debug.gdbjtag.pne.NUMBER_ELVES" value="0"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.BUSERR" value="true"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.CHKERR" value="true"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.CORERESET" value="true"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.PE.DEVICE_NAME" value="NXP_S32K1xx_S32K144F512M15"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.PE.GDB_OPTIONS" value=""/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.HARDERR" value="true"/>
 <intAttribute key="com.pemicro.debug.gdbjtag.pne.PE.HARDWARE_INTERFACE" value="6"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.INTERR" value="true"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.PE.LAST_ATTRIBUTE_HEADER" value="com.pemicro.debug.gdbjtag.pne.sda."/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.MMERR" value="true"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.NOCPERR" value="true"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.STATERR" value="true"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.STREAMING_ENABLE_PORT1" value="true"/>
+<stringAttribute key="com.pemicro.debug.gdbjtag.pne.PE.STREAMING_SERVER_PORT1" value="10224"/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.PE.USE_EXTERNAL_SERVER" value="true"/>
 <intAttribute key="com.pemicro.debug.gdbjtag.pne.algorithmIndex" value="0"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.alternativeAlgorithmPath" value=""/>
@@ -65,6 +75,8 @@
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.enableSemihosting" value="true"/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.enableSemihostingIoclientGdbClient" value="false"/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.enableSemihostingIoclientTelnet" value="true"/>
+<intAttribute key="com.pemicro.debug.gdbjtag.pne.eraseOptionIndex" value="0"/>
+<booleanAttribute key="com.pemicro.debug.gdbjtag.pne.eraseOptionsenabled" value="false"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.gdbClientOtherCommands" value="set mem inaccessible-by-default off&#13;&#10;set tcp auto-retry on&#13;&#10;set tcp connect-timeout 240"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.gdbClientOtherOptions" value=""/>
 <intAttribute key="com.pemicro.debug.gdbjtag.pne.gdbServerTelnetPortNumber" value="51794"/>

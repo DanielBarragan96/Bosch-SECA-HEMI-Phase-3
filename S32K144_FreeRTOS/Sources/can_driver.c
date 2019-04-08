@@ -82,6 +82,7 @@
 #define CAN_DELAY				(10000)
 
 #define CAN_RX_MSG_MSB_MASK		(0xFF000000)
+#define CAN_SET_RX_BUFF_ISR		(0x10)
 
 /** Variable to store the code of the Rx MB*/
 static uint32_t RxCODE;
@@ -159,6 +160,11 @@ void CAN_Init(CAN_Type* base, uint32_t speed)
 	while ((base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
 	/** Waits for the module to be ready*/
 	while ((base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
+}
+
+void CAN_enable_rx_interruption(CAN_Type* base)
+{
+	base->IMASK1 = CAN_SET_RX_BUFF_ISR;
 }
 
 /** This function sends a message via CAN*/

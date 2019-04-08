@@ -57,6 +57,8 @@ typedef enum
  */
 void CAN_Init(CAN_Type* base, uint32_t speed);
 
+void CAN_enable_rx_interruption(CAN_Type* base);
+
 /*!
  	 \brief This function sends a message via CAN using the standard ID.
 
