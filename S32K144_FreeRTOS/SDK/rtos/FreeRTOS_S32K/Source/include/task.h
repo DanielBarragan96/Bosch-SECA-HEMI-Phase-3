@@ -102,6 +102,8 @@ extern "C" {
  */
 typedef void * TaskHandle_t;
 
+typedef TaskHandle_t sys_thread_t;
+
 /*
  * Defines the prototype to which the application task hook function must
  * conform.
@@ -1966,6 +1968,11 @@ BaseType_t xTaskPriorityDisinherit( TaskHandle_t const pxMutexHolder ) PRIVILEGE
  * xTaskCreate() and xTaskCreateRestricted() macros.
  */
 BaseType_t xTaskGenericCreate( TaskFunction_t pxTaskCode, const char * const pcName, const uint16_t usStackDepth, void * const pvParameters, UBaseType_t uxPriority, TaskHandle_t * const pxCreatedTask, StackType_t * const puxStackBuffer, const MemoryRegion_t * const xRegions ) PRIVILEGED_FUNCTION; /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+
+/*
+ * Creates a thread.
+ */
+sys_thread_t sys_thread_new( const char *pcName, void( *pxThread )( void *pvParameters ), void *pvArg, int iStackSize, int iPriority );
 
 /*
  * Get the uxTCBNumber assigned to the task referenced by the xTask parameter.

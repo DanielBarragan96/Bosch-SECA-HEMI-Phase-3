@@ -81,8 +81,30 @@
 /** Delay for the Tx*/
 #define CAN_DELAY				(10000)
 
+/** Mask to get the MSB of the Rx message*/
 #define CAN_RX_MSG_MSB_MASK		(0xFF000000)
+/** Mask to enable the interruption of the Rx message buffer*/
 #define CAN_SET_RX_BUFF_ISR		(0x10)
+
+/** Size of the variable to concatenate the message received*/
+#define TEMP_VAR_SIZE			(2)
+/** Defines the bytes in a uint32_t variable*/
+#define BYTE_COUNT_4			(4)
+/** Shifts necessary to shift a byte*/
+#define BYTE_SHIFT				(8)
+/** Offset of the message position in the MB*/
+#define MSG_POS_OFFSET			(3)
+/** Shifts necessary to shift from a MSB to a LSB in a uint32_t*/
+#define MSB_TO_LSB_SHIFT		(24)
+/** Position of the low byte in the temp array*/
+#define LOW_BYTE_TEMP			(0)
+/** Position of the high byte in the temp array*/
+#define HIGH_BYTE_TEMP			(1)
+/** Offset of 1 for an array position*/
+#define ARRAY_OFFSET_1			(1)
+
+/** Maximum DLC that can be sent*/
+#define MAX_DLC					(8)
 
 /** Variable to store the code of the Rx MB*/
 static uint32_t RxCODE;
@@ -90,153 +112,166 @@ static uint32_t RxCODE;
 static uint32_t RxID;
 /** Variable to store the DLC of the Rx MB*/
 static uint32_t RxLENGTH;
-/** Variable to store the data of the Rx MB*/
-static uint32_t RxDATA[DATA_SIZE];
-
-/** This function delays the microprocesor*/
-static void Delay(uint32_t delay);
 
 /** This function initializes the CAN*/
-void CAN_Init(CAN_Type* base, uint32_t speed)
+void CAN_Init(can_init_config_t can_init)
 {
 	/** Counter to clean the RAM*/
 	uint8_t counter;
 
 	/** For CAN0*/
-	if(CAN0 == base)
+	if(CAN0 == can_init.base)
 	{
 		/** Enables the peripheral clock*/
 		PCC->PCCn[PCC_FlexCAN0_INDEX] |= PCC_PCCn_CGC_MASK;
 	}
 
 	/** For CAN1*/
-	else if(CAN1 == base)
+	else if(CAN1 == can_init.base)
 	{
 		/** Enables the peripheral clock*/
 		PCC->PCCn[PCC_FlexCAN1_INDEX] |= PCC_PCCn_CGC_MASK;
 	}
 
 	/** For CAN2*/
-	else if(CAN2 == base)
+	else if(CAN2 == can_init.base)
 	{
 		PCC->PCCn[PCC_FlexCAN2_INDEX] |= PCC_PCCn_CGC_MASK;
 	}
 
 	/** Disables the module*/
-	base->MCR |= CAN_MCR_MDIS_MASK;
+	can_init.base->MCR |= CAN_MCR_MDIS_MASK;
 	/** Sets the clock source to the oscillator clock*/
-	base->CTRL1 &= (~CAN_CTRL1_CLKSRC_MASK);
+	can_init.base->CTRL1 &= (~CAN_CTRL1_CLKSRC_MASK);
 	/** Enables the module*/
-	base->MCR &= (~CAN_MCR_MDIS_MASK);
+	can_init.base->MCR &= (~CAN_MCR_MDIS_MASK);
 
 	/** Waits for the module to enter freeze mode, to manage the CTRL and other registers*/
-	while(!((base->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT));
+	while(!((can_init.base->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT));
 
 	/** Configures the speed, and other parameters*/
-	base->CTRL1 = speed;
+	can_init.base->CTRL1 = can_init.speed;
 
 	/** Initializes the MB RAM in 0*/
 	for(counter = INIT_VAL ; MAX_MSG_BUFFERS > counter ; counter ++)
 	{
-		base->RAMn[counter] = INIT_VAL;
+		can_init.base->RAMn[counter] = INIT_VAL;
 
 		/** Sets the ID masks to not check the ID*/
 		if(MAX_FILTER_BUFFERS > counter)
 		{
-			base->RXIMR[counter] = NOT_CHECK_ANY_ID;
+			can_init.base->RXIMR[counter] = NOT_CHECK_ANY_ID;
 		}
 	}
 
 	/** Sets the global ID mask to not check any ID*/
-	CAN0->RXMGMASK = NOT_CHECK_ANY_ID;
+	can_init.base->RXMGMASK = NOT_CHECK_ANY_ID;
 
 	/** Enables the MB 4 for reception*/
-	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = ENABLE_RX_BUFF;
+	can_init.base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = ENABLE_RX_BUFF;
 
 	/** CAN FD not used*/
-	base->MCR = CAN_FD_DISABLE;
+	can_init.base->MCR = CAN_FD_DISABLE;
 
 	/** Waits for the module to exit freeze mode*/
-	while ((base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
+	while ((can_init.base->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT);
 	/** Waits for the module to be ready*/
-	while ((base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
+	while ((can_init.base->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT);
 }
 
+/** This function enables the interruption for the Rx message buffer*/
 void CAN_enable_rx_interruption(CAN_Type* base)
 {
 	base->IMASK1 = CAN_SET_RX_BUFF_ISR;
 }
 
 /** This function sends a message via CAN*/
-void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC)
+void CAN_send_message(can_message_tx_config_t can_message_tx)
 {
 	/** Counter to set the message to the MB*/
 	uint16_t counter = INIT_VAL;
 	uint16_t byte_counter = INIT_VAL;
-	uint32_t temp[2] = {INIT_VAL};
+	uint32_t temp[TEMP_VAR_SIZE] = {INIT_VAL};
 
 	/** Standard ID can only be of 11 bits*/
-	ID &= STD_ID_MASK;
+	can_message_tx.ID &= STD_ID_MASK;
+
+	if(MAX_DLC < can_message_tx.DLC)
+	{
+		can_message_tx.DLC = MAX_DLC;
+	}
 
 	/** Clears CAN 0 MB 0 interruption flag*/
-	base->IFLAG1 = CLEAR_MB_0;
+	can_message_tx.base->IFLAG1 = CLEAR_MB_0;
 
 	/** Sets the message in the CAN tx buffer*/
-	for(counter = INIT_VAL ; counter < DLC ; counter ++)
+	for(counter = INIT_VAL ; counter < can_message_tx.DLC ; counter ++)
 	{
-		temp[(counter / 4)] |= (uint32_t)((*msg) << ((3 - byte_counter) * 8));
+		/** Concatenates each of the bytes in msg to temp*/
+		temp[(counter / BYTE_COUNT_4)] |= (uint32_t)((*can_message_tx.msg) << ((MSG_POS_OFFSET - byte_counter) * BYTE_SHIFT));
 
-		msg ++;
+		/** Increments the pointer to msg*/
+		can_message_tx.msg ++;
+		/** Increments the number of bytes concatenated*/
 		byte_counter ++;
 
-		if(4 == byte_counter)
+		/** When first 4 bytes of temp are full*/
+		if(BYTE_COUNT_4 == byte_counter)
 		{
-			byte_counter = 0;
+			/** Resets the bytes concatenated count*/
+			byte_counter = INIT_VAL;
 		}
 	}
-	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS] = temp[0];
-	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + 1 + MSG_POS] = temp[1];
+
+	/** Sets the temp variable to the MB*/
+	can_message_tx.base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + MSG_POS] = temp[LOW_BYTE_TEMP];
+	can_message_tx.base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + ARRAY_OFFSET_1 + MSG_POS] = temp[HIGH_BYTE_TEMP];
 
 	/** Sets the ID to the bits 28-18 (ID bits for standard format)*/
-	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + ID_POS] = (ID << STD_ID_SHIFT);
+	can_message_tx.base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + ID_POS] = (can_message_tx.ID << STD_ID_SHIFT);
 
 	/** Sets the DLC and the CAN command to transmit*/
-	base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = (DLC << CAN_WMBn_CS_DLC_SHIFT) | TX_BUFF_TRANSMITT;
+	can_message_tx.base->RAMn[(TX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] = (can_message_tx.DLC << CAN_WMBn_CS_DLC_SHIFT) | TX_BUFF_TRANSMITT;
 
 	while(!CAN_get_tx_status(CAN0));
-	base->IFLAG1 = CLEAR_MB_0;
+	can_message_tx.base->IFLAG1 = CLEAR_MB_0;
 }
 
 /** This function receives a message from CAN*/
-void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint8_t* msg, uint8_t* DLC)
+void CAN_receive_message(can_message_rx_config_t *can_message_rx)
 {
 	/** Counter to get the message*/
 	uint8_t counter = INIT_VAL;
 
 	/** Gets the rx code*/
-	RxCODE = (base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_CODE_MASK) >> CAN_CODE_SHIFT;
+	RxCODE = ((*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_CODE_MASK) >> CAN_CODE_SHIFT;
 	/** Gets ID*/
-	RxID = (base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + ID_POS] & CAN_WMBn_ID_ID_MASK) >> STD_ID_SHIFT;
+	RxID = ((*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + ID_POS] & CAN_WMBn_ID_ID_MASK) >> STD_ID_SHIFT;
 	/** Gets the DLC*/
-	RxLENGTH = (base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_WMBn_CS_DLC_MASK);
+	RxLENGTH = ((*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] & CAN_WMBn_CS_DLC_MASK);
 	RxLENGTH  >>= CAN_WMBn_CS_DLC_SHIFT;
 
-	for(counter = 0; counter < RxLENGTH; counter ++)
+	/** Gets each of the bytes*/
+	for(counter = INIT_VAL ; counter < RxLENGTH ; counter ++)
 	{
-		(*msg) = (uint8_t)(((base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS]) & CAN_RX_MSG_MSB_MASK) >> 24);
-		base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / 4) + MSG_POS] <<= 8;
-		msg ++;
+		/** Gets the highest byte of the MB and sets it to msg*/
+		((*can_message_rx).msg[counter]) = (uint8_t)((((*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) +
+													(counter / BYTE_COUNT_4) + MSG_POS]) & CAN_RX_MSG_MSB_MASK) >> MSB_TO_LSB_SHIFT);
+
+		/** Shifts the remaining message to the left*/
+		(*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + (counter / BYTE_COUNT_4) + MSG_POS] <<= BYTE_SHIFT;
 	}
 
 	/** Clears the reception flag*/
-	base->IFLAG1 = CLEAR_MB_4;
+	(*can_message_rx).base->IFLAG1 = CLEAR_MB_4;
 
 	/** Returns the data*/
-	(*ID) = (uint16_t)RxID;
+	((*can_message_rx).ID) = (uint16_t)RxID;
 	/** Sets the DLC*/
-	(*DLC) = (uint8_t)(RxLENGTH);
+	((*can_message_rx).DLC) = (uint8_t)(RxLENGTH);
 
-	base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] |= 0x04000000;
+	/** Sets the MB ready for another message*/
+	(*can_message_rx).base->RAMn[(RX_BUFF_OFFSET * MSG_BUF_SIZE) + CODE_AND_DLC_POS] |= ENABLE_RX_BUFF;
 }
 
 /** Gets the flag of the RX buffer*/
@@ -255,15 +290,4 @@ CAN_tx_status_t CAN_get_tx_status(CAN_Type* base)
 void CAN_clear_tx_and_rx_flags(CAN_Type* base)
 {
 	base->IFLAG1 = CLEAR_ALL_FLAGS;
-}
-
-/** This function delays the microprocesor*/
-static void Delay(uint32_t delay)
-{
-	uint32_t counter = INIT_VAL;
-
-	for(counter = INIT_VAL ; counter < delay ; counter ++)
-	{
-
-	}
 }

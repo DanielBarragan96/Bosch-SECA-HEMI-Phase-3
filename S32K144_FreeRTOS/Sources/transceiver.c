@@ -14,11 +14,21 @@ void WDOG_disable (void)
 void PORT_init (void)
 {
 	PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
+	PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTD */
+
 	PORTE->PCR[4] |= PORT_PCR_MUX(5); /* Port E4: MUX = ALT5, CAN0_RX */
 	PORTE->PCR[5] |= PORT_PCR_MUX(5); /* Port E5: MUX = ALT5, CAN0_TX */
-	PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTD */
-	PORTD->PCR[16] =  0x00000100;  /* Port D16: MUX = GPIO (to green LED) */
-	PTD->PDDR |= 1<<16;            /* Port D16: Data direction = output */
+
+
+	PORTD->PCR[0]  =  0x00000100;  /* Port D0: MUX = GPIO */
+	PORTD->PCR[15] =  0x00000100;  /* Port D15: MUX = GPIO */
+	PORTD->PCR[16] =  0x00000100;  /* Port D16: MUX = GPIO */
+
+	PTD->PDDR |= 1<<0;       	  /* Port D0:  Data Direction= output */
+	PTD->PDDR |= 1<<15;          /* Port D15: Data Direction= output */
+	PTD->PDDR |= 1<<16;          /* Port D16: Data Direction= output */
+
+
 #ifdef SBC_MC33903  /* If board has MC33904, SPI pin config. is required */
 	PCC->PCCn[PCC_PORTB_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
 	PORTB->PCR[14] |= PORT_PCR_MUX(3);  /* Port B14: MUX = ALT3, LPSPI1_SCK */

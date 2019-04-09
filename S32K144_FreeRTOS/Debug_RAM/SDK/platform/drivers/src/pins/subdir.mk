@@ -30,7 +30,7 @@ C_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 SDK/platform/drivers/src/pins/pins_driver.o: ../SDK/platform/drivers/src/pins/pins_driver.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #20 $<'
+	@echo 'Executing target #21 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@SDK/platform/drivers/src/pins/pins_driver.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "SDK/platform/drivers/src/pins/pins_driver.o" "$<"
 	@echo 'Finished building: $<'

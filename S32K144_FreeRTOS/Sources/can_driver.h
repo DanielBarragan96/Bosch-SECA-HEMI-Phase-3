@@ -48,31 +48,64 @@ typedef enum
 }CAN_tx_status_t;
 
 /*!
+ 	 \brief Arguments to initialize CAN (RTOS)
+ */
+typedef struct
+{
+	CAN_Type* base; /*!< CAN to be initialized*/
+	uint32_t speed;	/*!< CAN speed to be set*/
+}can_init_config_t;
+
+/*!
+ 	 \brief Arguments to handle tx messages of CAN (RTOS)
+ */
+typedef struct
+{
+	CAN_Type* base;	/*!< CAN from which the message will be sent from*/
+	uint16_t ID;	/*!< ID of the message to be sent*/
+	uint8_t* msg;	/*!< Message to be sent*/
+	uint8_t DLC;	/*!< DLC of the message to be sent*/
+}can_message_tx_config_t;
+
+/*!
+ 	 \brief Arguments to handle tx messages of CAN (RTOS)
+ */
+typedef struct
+{
+	CAN_Type* base;	/*!< CAN which will receive the message*/
+	uint16_t ID;	/*!< ID received*/
+	uint8_t msg[8];	/*!< Message received*/
+	uint8_t DLC;	/*!< DLC received*/
+}can_message_rx_config_t;
+
+/*!
  	 \brief This function initializes the CAN module.
 
- 	 \param[in] base CAN module to be enabled.
- 	 \param[in] speed Speed of the CAN module.
+ 	 \param[in] can_init Configuration for the CAN driver.
 
  	 \return void.
  */
-void CAN_Init(CAN_Type* base, uint32_t speed);
+void CAN_Init(can_init_config_t can_init);
 
+/*!
+ 	 \brief This function enables the interruption for the Rx MB.
+
+ 	 \param[in] base CAN whose interruption will be enabled.
+
+ 	 \return void.
+ */
 void CAN_enable_rx_interruption(CAN_Type* base);
 
 /*!
  	 \brief This function sends a message via CAN using the standard ID.
 
- 	 \param[in] base CAN module from which the message will be sent.
- 	 \param[in] ID ID of the message to be sent.
- 	 \param[in] msg Message to be sent.\n
- 	 	 	 	 	 This parameter is managed as a uint32_t array, but the message
- 	 	 	 	 	 is sent byte by byte.
- 	 \param[in] msg_size Length of msg. The maximum size of msg should be 2.
- 	 \param[in] DLC Length of the message to be sent in bytes.
+ 	 \note If the DLC is higher than 8, it will be set to 8.
+
+	 \param[in] can_message_tx Message structure to be sent.
 
  	 \return void.
  */
-void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC);
+void CAN_send_message(can_message_tx_config_t can_message_tx);
 
 /*!
  	 \brief This function reads a message received via CAN.
@@ -80,15 +113,11 @@ void CAN_send_message(CAN_Type* base, uint16_t ID, uint8_t* msg, uint8_t DLC);
  	 \note First make sure the CAN has received a message using the function CAN_get_rx_status().
  	 \note This function erases the interruption flag of the Rx buffer.
 
- 	 \param[in] base CAN module from which the message will be received.
- 	 \param[out] ID ID of the message received.
- 	 \param[out] msg Message received.
- 	 \param[out] msg_size Length of msg.
- 	 \param[out] DLC Length of the received message in bytes.
+	 \param[out] can_message_rx Message structure with the data received.
 
  	 \return void.
  */
-void CAN_receive_message(CAN_Type* base, uint16_t* ID, uint8_t* msg, uint8_t* DLC);
+void CAN_receive_message(can_message_rx_config_t *can_message_rx);
 
 /*!
  	 \brief This function gets the status of the Rx message buffer.

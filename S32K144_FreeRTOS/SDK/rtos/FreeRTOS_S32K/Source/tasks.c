@@ -548,6 +548,9 @@ static void prvResetNextTaskUnblockTime( void );
 #endif
 /*-----------------------------------------------------------*/
 
+
+
+
 BaseType_t xTaskGenericCreate( TaskFunction_t pxTaskCode, const char * const pcName, const uint16_t usStackDepth, void * const pvParameters, UBaseType_t uxPriority, TaskHandle_t * const pxCreatedTask, StackType_t * const puxStackBuffer, const MemoryRegion_t * const xRegions ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
 {
 BaseType_t xReturn;
@@ -737,6 +740,29 @@ StackType_t *pxTopOfStack;
 
 	return xReturn;
 }
+
+/*-----------------------------------------------------------*/
+
+sys_thread_t sys_thread_new( const char *pcName, void( *pxThread )( void *pvParameters ), void *pvArg, int iStackSize, int iPriority )
+{
+TaskHandle_t xCreatedTask;
+portBASE_TYPE xResult;
+sys_thread_t xReturn;
+
+    xResult = xTaskCreate( pxThread, pcName, iStackSize, pvArg, iPriority, &xCreatedTask );
+
+    if( xResult == pdPASS )
+    {
+        xReturn = xCreatedTask;
+    }
+    else
+    {
+        xReturn = NULL;
+    }
+
+    return xReturn;
+}
+
 /*-----------------------------------------------------------*/
 
 #if ( INCLUDE_vTaskDelete == 1 )

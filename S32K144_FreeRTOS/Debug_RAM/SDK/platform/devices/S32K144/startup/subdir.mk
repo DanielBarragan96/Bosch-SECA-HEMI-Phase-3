@@ -30,7 +30,7 @@ C_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 SDK/platform/devices/S32K144/startup/system_S32K144.o: ../SDK/platform/devices/S32K144/startup/system_S32K144.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #25 $<'
+	@echo 'Executing target #26 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@SDK/platform/devices/S32K144/startup/system_S32K144.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "SDK/platform/devices/S32K144/startup/system_S32K144.o" "$<"
 	@echo 'Finished building: $<'

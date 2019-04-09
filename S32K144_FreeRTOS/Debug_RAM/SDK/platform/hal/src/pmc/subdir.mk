@@ -30,7 +30,7 @@ C_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 SDK/platform/hal/src/pmc/pmc_hal.o: ../SDK/platform/hal/src/pmc/pmc_hal.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #18 $<'
+	@echo 'Executing target #19 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@SDK/platform/hal/src/pmc/pmc_hal.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "SDK/platform/hal/src/pmc/pmc_hal.o" "$<"
 	@echo 'Finished building: $<'

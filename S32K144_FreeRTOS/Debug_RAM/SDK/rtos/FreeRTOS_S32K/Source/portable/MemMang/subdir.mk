@@ -30,7 +30,7 @@ C_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 SDK/rtos/FreeRTOS_S32K/Source/portable/MemMang/heap_2.o: ../SDK/rtos/FreeRTOS_S32K/Source/portable/MemMang/heap_2.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #12 $<'
+	@echo 'Executing target #13 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@SDK/rtos/FreeRTOS_S32K/Source/portable/MemMang/heap_2.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "SDK/rtos/FreeRTOS_S32K/Source/portable/MemMang/heap_2.o" "$<"
 	@echo 'Finished building: $<'

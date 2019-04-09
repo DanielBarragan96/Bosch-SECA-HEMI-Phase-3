@@ -1,4 +1,4 @@
-Sources/can_driver.o: ../Sources/can_driver.c ../Sources/can_driver.h \
+Sources/ADC.o: ../Sources/ADC.c ../Sources/ADC.h \
  C:/nxp/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h \
  C:/nxp/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/stdint.h \
  C:/nxp/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/ansi_parms.h \
@@ -10,7 +10,7 @@ Sources/can_driver.o: ../Sources/can_driver.c ../Sources/can_driver.h \
  C:/nxp/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/limits_api.h \
  C:/nxp/S32DS_ARM_v1.3/S32DS/arm_ewl2/EWL_C/include/ewl_lib_ext1.h
 
-../Sources/can_driver.h:
+../Sources/ADC.h:
 
 C:/nxp/S32DS_ARM_v1.3/S32DS/S32SDK_S32K144_RTM_1.0.0/platform/devices/S32K144/include/S32K144.h:
 

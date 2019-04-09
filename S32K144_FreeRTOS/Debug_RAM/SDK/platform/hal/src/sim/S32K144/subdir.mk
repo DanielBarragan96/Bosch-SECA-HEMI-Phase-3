@@ -30,7 +30,7 @@ C_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 SDK/platform/hal/src/sim/S32K144/sim_hal_S32K144.o: ../SDK/platform/hal/src/sim/S32K144/sim_hal_S32K144.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #15 $<'
+	@echo 'Executing target #16 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@SDK/platform/hal/src/sim/S32K144/sim_hal_S32K144.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "SDK/platform/hal/src/sim/S32K144/sim_hal_S32K144.o" "$<"
 	@echo 'Finished building: $<'
