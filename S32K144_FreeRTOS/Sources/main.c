@@ -139,9 +139,6 @@ int main(void)
 	test_ID_func.ID = TEST_CALLBACK_ID;
 	test_ID_func.ID_func = test_function;
 
-	/** Initializes the rtos can*/
-	rtos_can_init(can_init);
-
 	/** Defines the tx messages (Periodic and SW3*/
 	rtos_define_tx_periodic_msg(periodic_msg);
 	rtos_can_set_sw_msg(tx_msg_init);
@@ -152,6 +149,9 @@ int main(void)
 	/** Sets the periods for tx and ADC*/
 	set_tx_thread_period(TX_THREAD_PERIOD);
 	set_adc_tx_thread_period(ADC_THREAD_PERIOD);
+
+	/** Initializes the rtos can*/
+	rtos_can_init(can_init);
 
 	/** Creates the TX thread by interrupt*/
 	sys_thread_new("TX_interrupt_thread", rtos_can_tx_thread_EG, NULL, configMINIMAL_STACK_SIZE, TX_THREAD_PRIO);
